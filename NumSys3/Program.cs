@@ -1,5 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 namespace NumSys3;
+
 static class NumSys
 {
     private const string Alphabet = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMN";
