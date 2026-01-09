@@ -32,20 +32,11 @@ public class Number
         else strSign = "";
         return strSign + this.NumberBody + "^^" + this.NumberBase.ToString();
     }
-
-    public bool IsNegative()
-    {
-        return this.NumberSign == 1;
-    }
-    
-    public static Number Parse(byte numberSign, string numberBody, int numberBase)
-    {
-        return new Number(numberSign, numberBody, numberBase);
-    }
     
     
     public Number FromAnyBaseToDecimal()
     {
+        Console.WriteLine($"Начинаем процесс перевода числа {this.NumberSign}{this.NumberBody} из {this.NumberBase} с.с. в десятичную.");
         string newNumberBody = this.NumberBody;
         int origBase = this.NumberBase;
         byte origSign = this.NumberSign;
@@ -70,10 +61,6 @@ public class Number
             return new Number(0,newNumberBody.Length.ToString(), 10);
         }    
         
-        Console.WriteLine(@"
-        В рамках программного решения нам придётся временно избавиться от минуса (при его наличии).
-        Однако факт его наличия/отсутствия будет записан в отдельную логическую переменную,
-        благодаря в конце мы (не) поставим знак минуса в начало числа");
     
         /*
         Adding trailing zeros on fractional part.
@@ -92,6 +79,11 @@ public class Number
             decimal b = a * (decimal)(Math.Pow(origBase, Math.Abs((integerPart.IndexOf(i) - (integerPart.Length - 1)))));
             newIntegerStore += b;
         }
+        Console.WriteLine(@"
+        Здесь используем классическую схему перевода из n-ной с.с. в десятичную.
+        В рамках целой части начинаем с самой правой цифры: умножаем это число на
+        основание с.с. в степени индекса, который начинается с нуля.");
+        Console.WriteLine($"Получили в 'переведённой' целой части: {newIntegerStore}");
 
         int position = 1;
         foreach (char i in fractionalPart)
@@ -102,12 +94,19 @@ public class Number
             position++;
         }
         
+        Console.WriteLine(@"
+        Для нецелой части алгоритм идентичный. Только начинаем с самой левой цифры, а 
+        также индексу равному -1");
+        Console.WriteLine($"Получили в 'переведённой' нецелой части: {newFractionalStore}");
+        
         // Returning value with original sign
+        Console.WriteLine($"Итог: {new Number(origSign, (newIntegerStore + newFractionalStore).ToString(CultureInfo.InvariantCulture), 10)}");
         return new Number(origSign, (newIntegerStore + newFractionalStore).ToString(CultureInfo.InvariantCulture), 10);
     }
     
     public Number FromDecimalToAnyBase(int newBase, int accuracy = 10)
     {
+        Console.WriteLine($"Начинаем процесс перевода десятичного числа {this.NumberSign}{this.NumberBody} в {newBase} с.с.");
         byte origSign = this.NumberSign;
         if (this.NumberBase != 10) 
             throw new ArgumentException("The FromDecimalToAnyBase method allows NumSys objects only with NumSys.NumberBase = 10");
@@ -135,6 +134,10 @@ public class Number
         decimal oldFractionalPart = Convert.ToDecimal(inputFractPart); 
         
         // Working with integer part of decimalParam
+        Console.WriteLine(@"Переводим целую часть через столбик: путём последовательного
+        деления этой самой целой части на основание новой с.с. и записью остатков, которую мы потом
+        перевернём.");
+        Console.WriteLine("");
         while (oldIntegerPart > 0)
         {
             newIntegerPartList.Add(Alphabet[oldIntegerPart % newBase]);
@@ -142,9 +145,14 @@ public class Number
         }
         // Reversing the new integer part
         newIntegerPartList.Reverse();
+        Console.WriteLine($"В целой части получили {String.Join("", newIntegerPartList)}");
     
         // Working with fractional part of decimalParam
         // Accuracy will be around 10 symbols after a comma
+        Console.WriteLine(@"С переводом нецелой части ситуация иная. Мы просто должны умножать 
+        изначальную нецелую часть на основание новой с.с., брать от этого целую часть и записывать 
+        в новую нецелую часть, а затем отнимать от старой части вышеописанное произведение. Делаем так
+        пока не получим 0 или не превысим 10 цифр (выбранный нами лимит).");
         int counter = 0;
         while (oldFractionalPart != 0 && counter != accuracy)
         {
@@ -157,6 +165,7 @@ public class Number
         
         // Making sure that won't be empty if original inputs fractional part equals to zero
         if (counter == 0) newFractionalPartList.Add('0');
+        Console.WriteLine($"Новая нецелая часть: {String.Join("", newFractionalPartList)}");
         String.Join("", newIntegerPartList);
         return new Number(origSign, (String.Join("", newIntegerPartList) + "." + String.Join("", newFractionalPartList)).RemoveTrailingZeros(), newBase);
     }
@@ -284,6 +293,7 @@ public class Number
         
         
         // Unfortunately works only with positive numbers
+        Console.WriteLine($"Итог: {new Number(0, trueResult.RemoveTrailingZeros().RemoveUselessZeros(), number1.NumberBase)}");
         return new Number(0, trueResult.RemoveTrailingZeros().RemoveUselessZeros(), number1.NumberBase);
     }
     

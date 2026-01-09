@@ -71,6 +71,7 @@ public class CPURepresentation
         return result;
     }
 
+    // Работа с вещественными числами
     // Используется формат IEEE 754 single
     public static string ToFloatRepresentation(string strNum, int sizeOfBitField = 32)
     {
