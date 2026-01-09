@@ -126,10 +126,10 @@ public class SyntaxParser
     public static string ExecuteCpuInput(string input)
     {
         string[] dissected = input.Split(' ');
-        if (dissected[0] == "tsmr") return CPURepresentation.ToSignedMagnitudeRepresentation(dissected[1]);
-        if (dissected[0] == "toc") return CPURepresentation.ToOnesComplement(dissected[1]);
-        if (dissected[0] == "ttc") return CPURepresentation.ToTwosComplement(dissected[1]);
-        if (dissected[0] == "tfr") return CPURepresentation.ToFloatRepresentation(dissected[1]);
+        if (dissected[0] == "tsmr") return CpuRepresentation.ToSignedMagnitudeRepresentation(dissected[1]);
+        if (dissected[0] == "toc") return CpuRepresentation.ToOnesComplement(dissected[1]);
+        if (dissected[0] == "ttc") return CpuRepresentation.ToTwosComplement(dissected[1]);
+        if (dissected[0] == "tfr") return CpuRepresentation.ToFloatRepresentation(dissected[1]);
         throw new ArgumentException("The command couldn't be processed normally. Check for typos etc.");
     }
 }
